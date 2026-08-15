@@ -2,6 +2,7 @@ const placeholder = '/placeholder.svg'
 const avatarPlaceholder = '/placeholder-avatar.svg'
 
 export const deck = {
+  theme: 'default',
   title: '你的主题标题',
   subtitle: '一句话说明这场分享为什么值得听',
   speaker: {
@@ -167,4 +168,3 @@ export const deck = {
     },
   ],
 }
-

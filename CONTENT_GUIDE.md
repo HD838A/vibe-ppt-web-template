@@ -15,6 +15,28 @@
 6. 执行 `npm run validate` 检查内容结构和远程依赖。
 7. 执行 `npm run dev`，在浏览器中查看；执行 `npm run build` 做生产构建。
 
+## Markdown 导入
+
+使用 `npm run import:markdown -- <文件>` 将 Markdown 转换为 `src/content.js`。文件可用 YAML 风格 frontmatter 指定 `theme`、`title`、`subtitle` 和 `speaker`；缺少主题时回退为 `default`。一级标题 `# cover`、`# profile` 等表示一页，字段使用 `key: value`，列表放在 `## facts`、`## items`、`## steps`、`## loop`、`## reviews` 或 `## statements` 下，并用 `|` 分隔对象字段。
+
+```md
+---
+theme: apple
+title: 你的演示标题
+speaker:
+  name: 你的姓名
+  role: 你的职位
+---
+# cover
+eyebrow: YOUR TOPIC
+title:
+- 第一行标题
+- 第二行标题
+subtitle: 一句话副标题
+```
+
+图片只允许 `/placeholder.svg`、`/placeholder-avatar.svg`、`/placeholder-qr.svg` 或 `/assets/...` 本地路径，远程 URL、Base64 图片会被拒绝。导入脚本会先把现有内容备份到 `/tmp`。
+
 ## 给 AI 的约束
 
 让 AI 填充时，把下面这段作为任务边界：
@@ -39,4 +61,3 @@
 | 二维码 | `/placeholder-qr.svg` | 1:1 |
 
 不应把截图直接粘进代码或 Markdown；请保存为实际文件，再由 `src/content.js` 引用。
-

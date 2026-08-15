@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "validate": "node scripts/validate-content.mjs"
+    "validate": "node scripts/validate-content.mjs",
+    "import:markdown": "node scripts/markdown-to-content.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^5.0.4",
@@ -16,4 +17,3 @@
     "react-dom": "^19.1.1"
   }
 }
-

@@ -1,0 +1,69 @@
+export const DEFAULT_THEME_ID = 'default'
+
+const shared = {
+  '--theme-page-bg': '#e4e1da',
+  '--theme-bg': '#f3f1eb',
+  '--theme-surface': '#ffffff',
+  '--theme-ink': '#111111',
+  '--theme-muted': '#1111118f',
+  '--theme-faint': '#11111157',
+  '--theme-border': '#11111124',
+  '--theme-border-strong': '#11111147',
+  '--theme-title': '#111111',
+  '--theme-link': '#2454ff',
+  '--theme-accent': '#2454ff',
+  '--theme-accent-2': '#f7c331',
+  '--theme-dark': '#0d0e10',
+  '--theme-dark-muted': '#ffffff9e',
+  '--theme-dark-border': '#ffffff29',
+  '--theme-display-font': '"Syne", "PingFang SC", "Noto Sans SC", sans-serif',
+  '--theme-body-font': '"Inter", -apple-system, "PingFang SC", "Noto Sans SC", sans-serif',
+  '--theme-mono-font': '"IBM Plex Mono", ui-monospace, Menlo, monospace',
+  '--theme-radius': '4px',
+  '--theme-shadow': '0 24px 64px #11111126',
+  '--theme-ease': 'cubic-bezier(.2,.8,.2,1)',
+  '--theme-duration': '220ms',
+}
+
+export const themes = {
+  default: { id: 'default', name: '默认', vars: shared },
+  apple: {
+    id: 'apple', name: '苹果风', vars: { ...shared,
+      '--theme-page-bg': '#f5f5f7', '--theme-bg': '#ffffff', '--theme-surface': '#fbfbfd',
+      '--theme-ink': '#1d1d1f', '--theme-muted': '#6e6e73', '--theme-faint': '#86868b',
+      '--theme-border': '#1d1d1f18', '--theme-border-strong': '#1d1d1f32', '--theme-title': '#1d1d1f',
+      '--theme-link': '#06c', '--theme-accent': '#0071e3', '--theme-accent-2': '#34c759',
+      '--theme-dark': '#1d1d1f', '--theme-display-font': '"SF Pro Display", "Helvetica Neue", "PingFang SC", sans-serif',
+      '--theme-body-font': '"SF Pro Text", -apple-system, "PingFang SC", sans-serif', '--theme-mono-font': '"SF Mono", ui-monospace, Menlo, monospace',
+      '--theme-radius': '18px', '--theme-shadow': '0 18px 48px #1d1d1f14', '--theme-ease': 'cubic-bezier(.22,.61,.36,1)',
+    },
+  },
+  dopamine: {
+    id: 'dopamine', name: '多巴胺', vars: { ...shared,
+      '--theme-page-bg': '#fff4e8', '--theme-bg': '#fff9f2', '--theme-surface': '#ffffff',
+      '--theme-ink': '#24113f', '--theme-muted': '#5f4b73', '--theme-faint': '#8a7698',
+      '--theme-border': '#24113f2b', '--theme-border-strong': '#24113f52', '--theme-title': '#24113f',
+      '--theme-link': '#e83e8c', '--theme-accent': '#ff4d8d', '--theme-accent-2': '#ffd43b',
+      '--theme-dark': '#24113f', '--theme-dark-muted': '#fff1f7b8', '--theme-dark-border': '#ffffff32',
+      '--theme-display-font': '"Arial Rounded MT Bold", "Avenir Next", "PingFang SC", sans-serif',
+      '--theme-body-font': '"Avenir Next", "PingFang SC", sans-serif', '--theme-mono-font': '"IBM Plex Mono", ui-monospace, Menlo, monospace',
+      '--theme-radius': '24px', '--theme-shadow': '8px 10px 0 #24113f22', '--theme-ease': 'cubic-bezier(.34,1.56,.64,1)',
+    },
+  },
+  cyberpunk: {
+    id: 'cyberpunk', name: '赛博朋克', vars: { ...shared,
+      '--theme-page-bg': '#080b12', '--theme-bg': '#0d111b', '--theme-surface': '#111827',
+      '--theme-ink': '#e8f7ff', '--theme-muted': '#9bb3c5', '--theme-faint': '#6b8194',
+      '--theme-border': '#5de4ff55', '--theme-border-strong': '#ff3cacaa', '--theme-title': '#f5fbff',
+      '--theme-link': '#5de4ff', '--theme-accent': '#5de4ff', '--theme-accent-2': '#ff3cac',
+      '--theme-dark': '#05070b', '--theme-dark-muted': '#c5e9f5b8', '--theme-dark-border': '#5de4ff44',
+      '--theme-display-font': '"Space Grotesk", "IBM Plex Mono", "PingFang SC", sans-serif',
+      '--theme-body-font': '"Space Grotesk", "PingFang SC", sans-serif', '--theme-mono-font': '"IBM Plex Mono", ui-monospace, Menlo, monospace',
+      '--theme-radius': '2px', '--theme-shadow': '0 0 28px #5de4ff24', '--theme-ease': 'linear', '--theme-duration': '140ms',
+    },
+  },
+}
+
+export function resolveThemeId(themeId) {
+  return themes[themeId] ? themeId : DEFAULT_THEME_ID
+}

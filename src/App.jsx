@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { deck } from './content.js'
+import { resolveThemeId, themes } from './themes.js'
 import './deck.css'
 
 function Footer({ index, total, theme }) {
@@ -263,6 +264,8 @@ export default function App() {
   const [presentation, setPresentation] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
   const [selectedProject, setSelectedProject] = useState(0)
+  const themeId = resolveThemeId(deck.theme)
+  const theme = themes[themeId]
 
   const goTo = (index) => setActiveIndex(Math.max(0, Math.min(deck.slides.length - 1, index)))
   const enterPresentation = () => {
@@ -293,7 +296,7 @@ export default function App() {
   }, [activeIndex, presentation])
 
   return (
-    <main className={`app-shell ${presentation ? 'app-shell--present' : ''}`}>
+    <main className={`app-shell ${presentation ? 'app-shell--present' : ''}`} data-theme={themeId} style={theme.vars}>
       <div className="toolbar">
         {presentation && <span className="toolbar-count">{activeIndex + 1} / {deck.slides.length}</span>}
         <button onClick={presentation ? exitPresentation : enterPresentation}>{presentation ? '退出演讲模式' : '⛶ 演讲模式'}</button>
@@ -310,4 +313,3 @@ export default function App() {
     </main>
   )
 }
-
