@@ -61,13 +61,17 @@ function parseSlide(lines, type, id, index) {
   if (!TYPES.has(type)) throw new Error(`不支持的 slide type：${type}`)
   if (type === 'cover' && !slide.titleLines && slide.title) slide.titleLines = [slide.title]
   for (const [key, value] of Object.entries(slide)) if (['image', 'qr'].includes(key) && value && !IMAGE_RE.test(value)) throw new Error(`${id}.${key} 只允许 /placeholder*.svg 或 /assets/... 图片路径`)
-  if (Array.isArray(slide.items)) slide.items = slide.items.map((item) => { const [title, description, image] = item.split('|').map((part) => part.trim()); return { title, description, image: image || '/placeholder.svg' } })
+  if (Array.isArray(slide.items)) {
+    slide.items = type === 'skills'
+      ? slide.items.map((item) => { const [level, title, description] = item.split('|').map((part) => part.trim()); return { level, title, description } })
+      : slide.items.map((item) => { const [title, description, image] = item.split('|').map((part) => part.trim()); return { title, description, image: image || '/placeholder.svg' } })
+  }
   if (Array.isArray(slide.facts)) slide.facts = slide.facts.map((item) => { const [label, value] = item.split('|').map((part) => part.trim()); return { label, value } })
+  if (Array.isArray(slide.stats)) slide.stats = slide.stats.map((item) => { const [label, value] = item.split('|').map((part) => part.trim()); return { label, value } })
   if (Array.isArray(slide.steps)) slide.steps = slide.steps.map((item, n) => { const [a, b, c] = item.split('|').map((part) => part.trim()); return type === 'roadmap' ? { number: String(n + 1).padStart(2, '0'), title: a, description: b || '' } : { label: a, title: b || a, description: c || '' } })
   if (Array.isArray(slide.loop)) slide.loop = slide.loop.map((item) => item.trim())
   if (Array.isArray(slide.statements)) slide.statements = slide.statements.map((item, n) => { const [title, body] = item.split('|').map((part) => part.trim()); return { number: String(n + 1).padStart(2, '0'), title, body: body || '' } })
   if (Array.isArray(slide.reviews)) slide.reviews = slide.reviews.map((item) => { const [name, text, avatar] = item.split('|').map((part) => part.trim()); return { name, text, avatar: avatar || '/placeholder-avatar.svg' } })
-  if (Array.isArray(slide.items) && type === 'skills') slide.items = slide.items.map((item) => { const [level, title, description] = item.split('|').map((part) => part.trim()); return { level, title, description } })
   return { slide, nextIndex: i }
 }
 
