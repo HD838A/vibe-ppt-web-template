@@ -4,7 +4,15 @@ import path from 'node:path'
 
 const TYPES = new Set(['cover', 'profile', 'gallery', 'chapter', 'pipeline', 'stat', 'flow', 'roadmap', 'reviews', 'skills', 'closing', 'outro'])
 const THEMES = new Set(['default', 'apple', 'dopamine', 'cyberpunk'])
-const IMAGE_RE = /^\/(?:placeholder(?:-avatar|-qr)?\.svg|assets\/[^\s]+)$/
+const IMAGE_RE = /^\/(?:placeholder(?:-avatar|-qr|-background)?\.svg|assets\/[^\s]+)$/
+const LAYOUTS = new Set(['auto', 'media-left', 'media-right', 'media-top', 'media-bottom', 'full-bleed', 'center'])
+const IMAGE_RATIOS = new Set(['auto', '1:1', '4:3', '3:4', '16:9', '9:16'])
+const IMAGE_FITS = new Set(['cover', 'contain'])
+const IMAGE_POSITIONS = new Set(['center', 'top', 'bottom', 'left', 'right', 'top left', 'top right', 'bottom left', 'bottom right'])
+
+function assertImagePath(value, field) {
+  if (value && !IMAGE_RE.test(value)) throw new Error(`${field} 只允许 /placeholder*.svg 或 /assets/... 图片路径`)
+}
 
 const scalar = (value) => {
   const text = value.trim()
@@ -60,11 +68,23 @@ function parseSlide(lines, type, id, index) {
   }
   if (!TYPES.has(type)) throw new Error(`不支持的 slide type：${type}`)
   if (type === 'cover' && !slide.titleLines && slide.title) slide.titleLines = [slide.title]
-  for (const [key, value] of Object.entries(slide)) if (['image', 'qr'].includes(key) && value && !IMAGE_RE.test(value)) throw new Error(`${id}.${key} 只允许 /placeholder*.svg 或 /assets/... 图片路径`)
+  for (const key of ['image', 'qr', 'backgroundImage']) assertImagePath(slide[key], `${id}.${key}`)
+  if (slide.layout && !LAYOUTS.has(slide.layout)) throw new Error(`${id}.layout 必须是 ${[...LAYOUTS].join(' / ')}`)
+  if (slide.imageRatio && !IMAGE_RATIOS.has(slide.imageRatio)) throw new Error(`${id}.imageRatio 必须是 ${[...IMAGE_RATIOS].join(' / ')}`)
+  if (slide.imageFit && !IMAGE_FITS.has(slide.imageFit)) throw new Error(`${id}.imageFit 必须是 cover / contain`)
+  for (const key of ['imagePosition', 'backgroundPosition']) if (slide[key] && !IMAGE_POSITIONS.has(slide[key])) throw new Error(`${id}.${key} 使用了不支持的位置`)
   if (Array.isArray(slide.items)) {
     slide.items = type === 'skills'
       ? slide.items.map((item) => { const [level, title, description] = item.split('|').map((part) => part.trim()); return { level, title, description } })
-      : slide.items.map((item) => { const [title, description, image] = item.split('|').map((part) => part.trim()); return { title, description, image: image || '/placeholder.svg' } })
+      : slide.items.map((item, itemIndex) => {
+        const [title, description, image, imageRatio, imagePosition, imageFit] = item.split('|').map((part) => part.trim())
+        const result = { title, description, image: image || '/placeholder.svg' }
+        assertImagePath(result.image, `${id}.items[${itemIndex}].image`)
+        if (imageRatio) { if (!IMAGE_RATIOS.has(imageRatio)) throw new Error(`${id}.items[${itemIndex}].imageRatio 不受支持`); result.imageRatio = imageRatio }
+        if (imagePosition) { if (!IMAGE_POSITIONS.has(imagePosition)) throw new Error(`${id}.items[${itemIndex}].imagePosition 不受支持`); result.imagePosition = imagePosition }
+        if (imageFit) { if (!IMAGE_FITS.has(imageFit)) throw new Error(`${id}.items[${itemIndex}].imageFit 不受支持`); result.imageFit = imageFit }
+        return result
+      })
   }
   if (Array.isArray(slide.facts)) slide.facts = slide.facts.map((item) => { const [label, value] = item.split('|').map((part) => part.trim()); return { label, value } })
   if (Array.isArray(slide.stats)) slide.stats = slide.stats.map((item) => { const [label, value] = item.split('|').map((part) => part.trim()); return { label, value } })

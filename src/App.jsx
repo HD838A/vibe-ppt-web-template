@@ -17,9 +17,37 @@ function Eyebrow({ children }) {
   return <p className="eyebrow">{children}</p>
 }
 
+const ratioMap = { '1:1': '1 / 1', '4:3': '4 / 3', '3:4': '3 / 4', '16:9': '16 / 9', '9:16': '9 / 16' }
+
+function getMediaStyle(slide, media = slide, defaultFit = 'cover') {
+  return {
+    '--slide-image-ratio': ratioMap[media.imageRatio || slide.imageRatio] || 'auto',
+    '--slide-image-fit': media.imageFit || slide.imageFit || defaultFit,
+    '--slide-image-position': media.imagePosition || slide.imagePosition || 'center',
+  }
+}
+
+function SlideSurface({ slide, className, children }) {
+  const layout = slide.layout || 'auto'
+  return (
+    <section className={`slide ${className} layout--${layout} ${slide.backgroundImage ? 'slide--has-background' : ''}`} data-layout={layout}>
+      {slide.backgroundImage ? (
+        <img
+          className="slide-background"
+          src={slide.backgroundImage}
+          alt=""
+          aria-hidden="true"
+          style={{ objectPosition: slide.backgroundPosition || slide.imagePosition || 'center' }}
+        />
+      ) : null}
+      {children}
+    </section>
+  )
+}
+
 function CoverSlide({ slide }) {
   return (
-    <section className="slide slide--cover">
+    <SlideSurface slide={slide} className="slide--cover">
       <div className="cover-grid" />
       <div className="cover-orb cover-orb--a" />
       <div className="cover-orb cover-orb--b" />
@@ -28,13 +56,13 @@ function CoverSlide({ slide }) {
         <h1>{slide.titleLines.map((line) => <span key={line}>{line}</span>)}</h1>
         <p className="cover-subtitle">{slide.subtitle}</p>
       </div>
-    </section>
+    </SlideSurface>
   )
 }
 
 function ProfileSlide({ slide }) {
   return (
-    <section className="slide slide--profile">
+    <SlideSurface slide={slide} className="slide--profile">
       <div className="profile-copy">
         <Eyebrow>{slide.eyebrow}</Eyebrow>
         <h2>{slide.title}</h2>
@@ -49,16 +77,16 @@ function ProfileSlide({ slide }) {
         </div>
       </div>
       <div className="profile-visual">
-        <img src={slide.image} alt="占位图片" />
+        <img src={slide.image} alt="占位图片" style={getMediaStyle(slide)} />
       </div>
-    </section>
+    </SlideSurface>
   )
 }
 
 function GallerySlide({ slide, selected, onSelect }) {
   const selectedItem = slide.items[selected] ?? slide.items[0]
   return (
-    <section className="slide slide--gallery">
+    <SlideSurface slide={slide} className="slide--gallery">
       <div className="gallery-copy">
         <Eyebrow>{slide.eyebrow}</Eyebrow>
         <h2>{slide.title}</h2>
@@ -78,27 +106,27 @@ function GallerySlide({ slide, selected, onSelect }) {
         </div>
       </div>
       <div className="gallery-visual">
-        <img src={selectedItem.image} alt="项目占位图片" />
+        <img src={selectedItem.image} alt="项目占位图片" style={getMediaStyle(slide, selectedItem, 'contain')} />
       </div>
-    </section>
+    </SlideSurface>
   )
 }
 
 function ChapterSlide({ slide }) {
   return (
-    <section className="slide slide--chapter">
+    <SlideSurface slide={slide} className="slide--chapter">
       <div className="chapter-glow" />
       <span className="chapter-index">{slide.index}</span>
       <Eyebrow>{slide.overline}</Eyebrow>
       <h2>{slide.title}</h2>
       <p>{slide.subtitle}</p>
-    </section>
+    </SlideSurface>
   )
 }
 
 function PipelineSlide({ slide }) {
   return (
-    <section className="slide slide--pipeline">
+    <SlideSurface slide={slide} className="slide--pipeline">
       <Eyebrow>{slide.eyebrow}</Eyebrow>
       <h2>{slide.title}</h2>
       <p className="prose prose--muted">{slide.lead}</p>
@@ -112,24 +140,24 @@ function PipelineSlide({ slide }) {
         ))}
       </div>
       <p className="callout">{slide.note}</p>
-    </section>
+    </SlideSurface>
   )
 }
 
 function StatSlide({ slide }) {
   return (
-    <section className="slide slide--stat">
+    <SlideSurface slide={slide} className="slide--stat">
       <Eyebrow>{slide.eyebrow}</Eyebrow>
       <h2>{slide.title}</h2>
       <div className="stat-number">{slide.value}<span>{slide.suffix}</span></div>
       <p>{slide.caption}</p>
-    </section>
+    </SlideSurface>
   )
 }
 
 function FlowSlide({ slide }) {
   return (
-    <section className="slide slide--flow">
+    <SlideSurface slide={slide} className="slide--flow">
       <Eyebrow>{slide.eyebrow}</Eyebrow>
       <h2>{slide.title}</h2>
       <div className="flow-layout">
@@ -146,13 +174,13 @@ function FlowSlide({ slide }) {
           ))}
         </div>
       </div>
-    </section>
+    </SlideSurface>
   )
 }
 
 function RoadmapSlide({ slide }) {
   return (
-    <section className="slide slide--roadmap">
+    <SlideSurface slide={slide} className="slide--roadmap">
       <Eyebrow>{slide.eyebrow}</Eyebrow>
       <h2>{slide.title}</h2>
       <div className="roadmap">
@@ -165,13 +193,13 @@ function RoadmapSlide({ slide }) {
         ))}
       </div>
       <div className="roadmap-callout">{slide.callout}</div>
-    </section>
+    </SlideSurface>
   )
 }
 
 function ReviewsSlide({ slide }) {
   return (
-    <section className="slide slide--reviews">
+    <SlideSurface slide={slide} className="slide--reviews">
       <div className="reviews-side">
         <Eyebrow>{slide.eyebrow}</Eyebrow>
         <h2>{slide.title}</h2>
@@ -189,13 +217,13 @@ function ReviewsSlide({ slide }) {
           </article>
         ))}
       </div>
-    </section>
+    </SlideSurface>
   )
 }
 
 function SkillsSlide({ slide }) {
   return (
-    <section className="slide slide--skills">
+    <SlideSurface slide={slide} className="slide--skills">
       <Eyebrow>{slide.eyebrow}</Eyebrow>
       <h2>{slide.title}</h2>
       <div className="skills-grid">
@@ -207,13 +235,13 @@ function SkillsSlide({ slide }) {
           </article>
         ))}
       </div>
-    </section>
+    </SlideSurface>
   )
 }
 
 function ClosingSlide({ slide }) {
   return (
-    <section className="slide slide--closing">
+    <SlideSurface slide={slide} className="slide--closing">
       <Eyebrow>{slide.eyebrow}</Eyebrow>
       <div className="closing-grid">
         {slide.statements.map((statement) => (
@@ -224,21 +252,21 @@ function ClosingSlide({ slide }) {
           </article>
         ))}
       </div>
-    </section>
+    </SlideSurface>
   )
 }
 
 function OutroSlide({ slide }) {
   return (
-    <section className="slide slide--outro">
+    <SlideSurface slide={slide} className="slide--outro">
       <div className="outro-copy">
         <Eyebrow>{slide.eyebrow}</Eyebrow>
         <p>{slide.body}</p>
         <h2>{slide.title}</h2>
         <strong>{slide.account}</strong>
       </div>
-      <div className="outro-visual"><img src={slide.image} alt="封面占位图片" /></div>
-    </section>
+      <div className="outro-visual"><img src={slide.image} alt="封面占位图片" style={getMediaStyle(slide)} /></div>
+    </SlideSurface>
   )
 }
 

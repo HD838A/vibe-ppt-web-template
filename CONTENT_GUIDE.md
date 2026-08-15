@@ -35,7 +35,28 @@ title:
 subtitle: 一句话副标题
 ```
 
-图片只允许 `/placeholder.svg`、`/placeholder-avatar.svg`、`/placeholder-qr.svg` 或 `/assets/...` 本地路径，远程 URL、Base64 图片会被拒绝。导入脚本会先把现有内容备份到 `/tmp`。
+图片只允许 `/placeholder.svg`、`/placeholder-avatar.svg`、`/placeholder-qr.svg`、`/placeholder-background.svg` 或 `/assets/...` 本地路径，远程 URL、Base64 图片会被拒绝。导入脚本会先把现有内容备份到 `/tmp`。
+
+### 图片与构图字段
+
+```md
+# profile
+layout: media-right
+image: /assets/product.jpg
+imageRatio: 4:3
+imageFit: cover
+imagePosition: top
+backgroundImage: /assets/background.jpg
+backgroundPosition: center
+```
+
+- `layout`：`auto`、`media-left`、`media-right`、`media-top`、`media-bottom`、`full-bleed`、`center`。
+- `imageRatio`：`auto`、`1:1`、`4:3`、`3:4`、`16:9`、`9:16`。
+- `imageFit`：摄影图通常使用 `cover`，产品图、界面截图和流程图通常使用 `contain`。
+- `imagePosition` / `backgroundPosition`：`center`、`top`、`bottom`、`left`、`right`、`top left`、`top right`、`bottom left`、`bottom right`。
+- 画廊项目支持 `标题 | 描述 | 图片 | 比例 | 焦点 | fit`。
+
+主题会决定默认边距、图文比例、图片框、卡片和标题节奏；Markdown 的 `layout` 用来表达这一页的内容意图，不应为每套主题手写不同内容。
 
 ## 给 AI 的约束
 

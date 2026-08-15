@@ -20,6 +20,8 @@ npm run import:markdown -- examples/sample-apple.md
 
 主题规范见 [`THEME_GUIDE.md`](THEME_GUIDE.md)。内置主题 ID 为 `default`、`apple`、`dopamine`、`cyberpunk`；Markdown frontmatter 未写 `theme` 时自动使用 `default`。
 
+每套主题拥有独立的标题比例、页面边距、图文构图、图片框架和卡片结构。Markdown 可用 `layout`、`imageRatio`、`imageFit`、`imagePosition`、`backgroundImage` 和 `backgroundPosition` 控制单页图片表达，完整字段见 [`CONTENT_GUIDE.md`](CONTENT_GUIDE.md)。
+
 然后打开终端显示的本地地址。生产构建：
 
 ```bash

@@ -9,6 +9,7 @@ speaker:
 ---
 
 # cover
+layout: center
 eyebrow: PRODUCT STORY
 title:
 - 从一个问题开始
@@ -16,6 +17,10 @@ title:
 subtitle: 用最少的噪音制造最大的理解
 
 # profile
+layout: media-right
+imageRatio: 4:3
+imageFit: cover
+imagePosition: center
 eyebrow: 01 / 背景
 title: 你正在解决什么？
 lead: 用两三句话交代背景、问题和正在推进的事情。
@@ -26,6 +31,7 @@ image: /placeholder.svg
 - 目标 | 你希望听众记住什么
 
 # chapter
+layout: center
 index: 01
 overline: ACT 01
 title: 先把问题说清楚

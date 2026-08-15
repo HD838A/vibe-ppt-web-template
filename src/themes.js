@@ -23,6 +23,13 @@ const shared = {
   '--theme-shadow': '0 24px 64px #11111126',
   '--theme-ease': 'cubic-bezier(.2,.8,.2,1)',
   '--theme-duration': '220ms',
+  '--theme-slide-padding': '72px',
+  '--theme-layout-gap': '48px',
+  '--theme-heading-scale': '1',
+  '--theme-media-radius': '0px',
+  '--theme-media-border': '1px solid #11111124',
+  '--theme-card-radius': '0px',
+  '--theme-card-padding': '20px',
 }
 
 export const themes = {
@@ -36,6 +43,8 @@ export const themes = {
       '--theme-dark': '#1d1d1f', '--theme-display-font': '"SF Pro Display", "Helvetica Neue", "PingFang SC", sans-serif',
       '--theme-body-font': '"SF Pro Text", -apple-system, "PingFang SC", sans-serif', '--theme-mono-font': '"SF Mono", ui-monospace, Menlo, monospace',
       '--theme-radius': '18px', '--theme-shadow': '0 18px 48px #1d1d1f14', '--theme-ease': 'cubic-bezier(.22,.61,.36,1)',
+      '--theme-slide-padding': '84px', '--theme-layout-gap': '64px', '--theme-heading-scale': '1.08',
+      '--theme-media-radius': '28px', '--theme-media-border': '1px solid #1d1d1f12', '--theme-card-radius': '22px', '--theme-card-padding': '24px',
     },
   },
   dopamine: {
@@ -48,6 +57,8 @@ export const themes = {
       '--theme-display-font': '"Arial Rounded MT Bold", "Avenir Next", "PingFang SC", sans-serif',
       '--theme-body-font': '"Avenir Next", "PingFang SC", sans-serif', '--theme-mono-font': '"IBM Plex Mono", ui-monospace, Menlo, monospace',
       '--theme-radius': '24px', '--theme-shadow': '8px 10px 0 #24113f22', '--theme-ease': 'cubic-bezier(.34,1.56,.64,1)',
+      '--theme-slide-padding': '64px', '--theme-layout-gap': '32px', '--theme-heading-scale': '1.12',
+      '--theme-media-radius': '32px', '--theme-media-border': '4px solid #24113f', '--theme-card-radius': '26px', '--theme-card-padding': '22px',
     },
   },
   cyberpunk: {
@@ -60,6 +71,8 @@ export const themes = {
       '--theme-display-font': '"Space Grotesk", "IBM Plex Mono", "PingFang SC", sans-serif',
       '--theme-body-font': '"Space Grotesk", "PingFang SC", sans-serif', '--theme-mono-font': '"IBM Plex Mono", ui-monospace, Menlo, monospace',
       '--theme-radius': '2px', '--theme-shadow': '0 0 28px #5de4ff24', '--theme-ease': 'linear', '--theme-duration': '140ms',
+      '--theme-slide-padding': '58px', '--theme-layout-gap': '28px', '--theme-heading-scale': '.96',
+      '--theme-media-radius': '0px', '--theme-media-border': '1px solid #5de4ff88', '--theme-card-radius': '0px', '--theme-card-padding': '18px',
     },
   },
 }
