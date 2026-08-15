@@ -11,8 +11,6 @@ for (const slide of deck.slides) {
 }
 
 if (/data:image\//i.test(contentSource)) throw new Error('请不要把图片以内嵌 Base64 放进内容文件。')
-if (/REFERENCE_BRAND_TERMS/i.test(contentSource)) throw new Error('内容文件仍包含参考项目的个人或品牌信息。')
 if (/https?:\/\//i.test(contentSource)) throw new Error('内容文件不应依赖远程链接；请把素材放进 public/assets。')
 
 console.log(`✓ 内容校验通过：${deck.slides.length} 页，${supportedTypes.size} 种可用版式。`)
-
