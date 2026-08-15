@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="QR placeholder">
+  <rect width="256" height="256" fill="#fff"/>
+  <g fill="#111">
+    <path d="M16 16h72v72H16zM30 30v44h44V30zM44 44h16v16H44zM168 16h72v72h-72zM182 30v44h44V30zM196 44h16v16h-16zM16 168h72v72H16zM30 182v44h44v-44zM44 196h16v16H44z"/>
+    <path d="M112 16h16v16h-16zM112 48h16v32h-16zM96 96h32v16H96zM144 96h16v16h-16zM176 112h16v32h-16zM208 96h32v16h-32zM96 128h16v32H96zM128 128h32v16h-32zM112 160h16v32h-16zM144 160h16v16h-16zM176 160h16v16h-16zM208 144h32v16h-32zM96 208h32v16H96zM144 192h16v48h-16zM176 208h16v32h-16zM208 192h32v16h-32z"/>
+  </g>
+  <text x="128" y="132" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#2454ff">QR PLACEHOLDER</text>
+</svg>
+
