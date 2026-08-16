@@ -28,3 +28,11 @@ title: 开始填充你的内容
 body: 用自己的 Markdown 替换这些占位文字。
 account: '@your-account'
 image: /placeholder.svg
+## images
+- /placeholder-qr.svg | 入口二维码占位图 1 | 入口一
+- /placeholder-qr.svg | 入口二维码占位图 2 | 入口二
+## marqueeImages
+- /placeholder.svg | 滚动图片 1
+- /placeholder-background.svg | 滚动图片 2
+- /placeholder-avatar.svg | 滚动图片 3
+- /placeholder-qr.svg | 滚动图片 4

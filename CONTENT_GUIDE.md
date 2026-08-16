@@ -57,6 +57,9 @@ backgroundPosition: center
 - `backgroundFit`：背景摄影图通常使用 `cover`；需要完整展示的产品图或设备图使用 `contain`。它与 `imageFit` 独立，避免普通图片设置意外改变背景裁切。
 - `imagePosition` / `backgroundPosition`：`center`、`top`、`bottom`、`left`、`right`、`top left`、`top right`、`bottom left`、`bottom right`。
 - 画廊项目支持 `标题 | 描述 | 图片 | 比例 | 焦点 | fit`。
+- `stackRatio`：控制叠卡外框比例，默认 `4:3`；它与图片自身的 `imageRatio` 分开，避免竖图把整张卡撑出页面。
+- `images`：结束页左侧的 1–2 张入口图片，使用 `## images` 和 `图片路径 | 替代文字 | 标签`。当结束页同时配置 `marqueeImages` 时，会使用大尺寸双图布局；二维码、海报等纵向素材始终以 `contain` 完整展示。
+- `marqueeImages`：结束页双轨滚动画廊，使用 `## marqueeImages` 和 `图片路径 | 替代文字`；至少提供 2 张，建议 6 张以上以减少重复感。
 
 主题会决定默认边距、图文比例、图片框、卡片和标题节奏；Markdown 的 `layout` 用来表达这一页的内容意图，不应为每套主题手写不同内容。
 
@@ -65,6 +68,7 @@ backgroundPosition: center
 - `contain` 只能保证图片内容完整，不会移除图片文件自身已经存在的白色像素。
 - PNG/WebP 透明素材若出现矩形白底，先检查原文件是否真的带透明通道，再检查主题图片框是否设置了背景、边框或阴影。
 - 设备图、界面截图和二维码默认优先 `contain`；只有允许裁掉边缘的摄影图才使用 `cover`。
+- 不要只看源码里是否写了 `object-fit: contain`；主题或通用图片选择器可能用更高优先级覆盖它。自动 QA 应检查浏览器计算后的 `object-fit`，关键入口图片必须确认为 `contain`。
 - 关键按钮或顶部状态栏必须进入逐页截图验收，不能只依赖图片加载成功。
 - 素材文件可能自带透明外边距、白色画布或拍摄背景；CSS 无法可靠区分“需要保留的白色内容”和“多余白边”，应先检查原图像素边界。
 - 二维码、海报和截图中的日期、账号、型号等文字属于图片内容，替换素材后必须人工复核，不能只校验文件尺寸和加载状态。

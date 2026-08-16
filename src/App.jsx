@@ -87,7 +87,7 @@ function ProfileSlide({ slide }) {
 }
 
 function GallerySlide({ slide, selected, onSelect }) {
-  const selectedItem = slide.items[selected] ?? slide.items[0]
+  const total = slide.items.length
   return (
     <SlideSurface slide={slide} className="slide--gallery">
       <div className="gallery-copy">
@@ -109,7 +109,35 @@ function GallerySlide({ slide, selected, onSelect }) {
         </div>
       </div>
       <div className="gallery-visual">
-        <img key={selectedItem.image} src={selectedItem.image} alt="项目占位图片" style={getMediaStyle(slide, selectedItem, 'contain')} />
+        <div className="gallery-stack">
+          {slide.items.map((item, itemIndex) => {
+            const rawOffset = (itemIndex - selected + total) % total
+            const offset = rawOffset > total / 2 ? rawOffset - total : rawOffset
+            const depth = Math.abs(offset)
+            const direction = Math.sign(offset)
+            return (
+              <button
+                type="button"
+                className={`gallery-stack-card ${offset === 0 ? 'gallery-stack-card--active' : ''}`}
+                key={item.image}
+                aria-label={`显示 ${item.title}`}
+                onClick={() => onSelect(itemIndex)}
+                style={{
+                  ...getMediaStyle(slide, item, 'contain'),
+                  '--gallery-stack-ratio': ratioMap[item.stackRatio || slide.stackRatio] || '4 / 3',
+                  '--stack-x': `${direction * (34 + Math.max(0, depth - 1) * 10)}%`,
+                  '--stack-y': `${depth === 0 ? -4 : 11 + Math.max(0, depth - 1) * 6}%`,
+                  '--stack-rotate': `${depth === 0 ? 1 : direction * (8 + Math.max(0, depth - 1) * 2)}deg`,
+                  '--stack-scale': `${depth === 0 ? 1.03 : Math.max(.84, .97 - Math.max(0, depth - 1) * .06)}`,
+                  '--stack-z': total + 2 - depth,
+                  '--stack-opacity': depth > 2 ? .58 : 1,
+                }}
+              >
+                <img src={item.image} alt={item.title} />
+              </button>
+            )
+          })}
+        </div>
       </div>
     </SlideSurface>
   )
@@ -263,15 +291,47 @@ function ClosingSlide({ slide }) {
 }
 
 function OutroSlide({ slide }) {
+  const images = slide.images || (slide.image ? [{ src: slide.image, alt: '结束页占位图片' }] : [])
+  const marqueeImages = slide.marqueeImages || []
+  const rows = [
+    marqueeImages.filter((_, index) => index % 2 === 0),
+    marqueeImages.filter((_, index) => index % 2 === 1),
+  ].map((row) => row.length ? row : marqueeImages)
   return (
-    <SlideSurface slide={slide} className="slide--outro">
+    <SlideSurface slide={slide} className={`slide--outro ${marqueeImages.length ? 'slide--outro-marquee' : ''}`}>
       <div className="outro-copy">
         <Eyebrow>{slide.eyebrow}</Eyebrow>
         <p>{slide.body}</p>
         <h2>{slide.title}</h2>
         <strong>{slide.account}</strong>
+        {marqueeImages.length && images.length ? (
+          <div className="outro-qr-grid">
+            {images.map((image) => (
+              <figure key={image.src}>
+                <img src={image.src} alt={image.alt} />
+                {image.label ? <figcaption>{image.label}</figcaption> : null}
+              </figure>
+            ))}
+          </div>
+        ) : null}
       </div>
-      <div className="outro-visual"><img src={slide.image} alt="封面占位图片" style={getMediaStyle(slide)} /></div>
+      <div className="outro-visual">
+        {marqueeImages.length ? (
+          <div className="outro-marquee" aria-label="滚动图片画廊">
+            {rows.map((row, rowIndex) => (
+              <div className={`outro-marquee-row ${rowIndex === 1 ? 'outro-marquee-row--reverse' : ''}`} key={rowIndex}>
+                <div className="outro-marquee-track">
+                  {[...row, ...row].map((image, imageIndex) => (
+                    <figure className="outro-marquee-card" aria-hidden={imageIndex >= row.length} key={`${image.src}-${imageIndex}`}>
+                      <img src={image.src} alt={imageIndex < row.length ? image.alt : ''} />
+                    </figure>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : images[0] ? <img src={images[0].src} alt={images[0].alt} style={getMediaStyle(slide)} /> : null}
+      </div>
     </SlideSurface>
   )
 }
@@ -306,6 +366,7 @@ export default function App() {
 
   const goTo = (index) => setActiveIndex(Math.max(0, Math.min(deck.slides.length - 1, index)))
   const enterPresentation = () => {
+    window.scrollTo(0, 0)
     setPresentation(true)
     document.documentElement.requestFullscreen?.().catch(() => {})
   }

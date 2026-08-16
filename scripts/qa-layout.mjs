@@ -93,8 +93,8 @@ const auditVisibleSlide = async (page) => page.evaluate(() => {
     .filter(isVisible)
     .filter((element) => element.innerText.trim())
     .filter((element) => ![...element.children].some((child) => child.matches('h1,h2,h3,p,span,strong,small')))
-  const contentElements = [...slide.querySelectorAll('h1,h2,h3,p,.fact,.gallery-item,.pipeline-step,.flow-step,.reviews-stats > div,.review-wall > article,img:not(.slide-background),.qr')].filter(isVisible)
-  const images = [...slide.querySelectorAll('img:not(.slide-background)')].filter(isVisible)
+  const contentElements = [...slide.querySelectorAll('h1,h2,h3,p,.fact,.gallery-item,.gallery-stack-card--active,.pipeline-step,.flow-step,.reviews-stats > div,.review-wall > article,img:not(.slide-background):not(.gallery-stack-card img):not(.outro-marquee-card img),.qr')].filter(isVisible)
+  const images = [...slide.querySelectorAll('img:not(.slide-background):not(.gallery-stack-card img):not(.outro-marquee-card img)')].filter(isVisible)
 
   const outside = contentElements.filter((element) => {
     const rect = element.getBoundingClientRect()
@@ -102,6 +102,7 @@ const auditVisibleSlide = async (page) => page.evaluate(() => {
   }).map(label)
   const clipped = contentElements.filter((element) => {
     if (element.tagName === 'IMG') return false
+    if (element.classList.contains('gallery-stack-card')) return false
     const style = getComputedStyle(element)
     const clipsX = !['visible', 'clip'].includes(style.overflowX)
     const clipsY = !['visible', 'clip'].includes(style.overflowY)
@@ -191,6 +192,22 @@ const auditMotionContract = async (page) => page.evaluate(() => {
   if (hiddenDisplay.some((display) => display === 'none')) failures.push('非活动页被 display:none 移除，无法交叉淡出')
   const target = active.querySelector('.slide > :not(.slide-background):not(.cover-grid):not(.cover-orb):not(.chapter-glow)')
   if (!target || getComputedStyle(target).animationName === 'none') failures.push('活动页内容缺少入场动画')
+  const gallery = active.querySelector('.slide--gallery')
+  if (gallery) {
+    const cards = [...gallery.querySelectorAll('.gallery-stack-card')]
+    const activeCards = cards.filter((card) => card.classList.contains('gallery-stack-card--active'))
+    if (cards.length < 2) failures.push('叠卡画廊没有同时渲染至少两张卡片')
+    if (activeCards.length !== 1) failures.push(`叠卡画廊主卡数量应为 1，实际为 ${activeCards.length}`)
+    if (cards.some((card) => !getComputedStyle(card).transitionProperty.includes('transform'))) failures.push('叠卡画廊缺少 transform 重排过渡')
+  }
+  const marquee = active.querySelector('.outro-marquee')
+  if (marquee) {
+    const tracks = [...marquee.querySelectorAll('.outro-marquee-track')]
+    if (tracks.length !== 2) failures.push(`结束页滚动画廊轨道数量应为 2，实际为 ${tracks.length}`)
+    if (tracks.some((track) => getComputedStyle(track).animationName === 'none')) failures.push('结束页滚动画廊缺少循环动画')
+    const actionImages = [...active.querySelectorAll('.outro-qr-grid img')]
+    if (actionImages.length && actionImages.some((image) => getComputedStyle(image).objectFit !== 'contain')) failures.push('结束页入口图片必须使用 contain 完整展示')
+  }
   return failures
 })
 
@@ -229,6 +246,10 @@ try {
   await mkdir(outputRoot, { recursive: true })
   browser = await chromium.launch({ headless: true })
   const page = await browser.newPage({ viewport: { width: 1280, height: 720 } })
+  await page.addInitScript(() => {
+    Object.defineProperty(document.documentElement, 'requestFullscreen', { configurable: true, value: async () => {} })
+    Object.defineProperty(document, 'exitFullscreen', { configurable: true, value: async () => {} })
+  })
 
   for (const theme of themes) {
     const themeOutput = path.join(outputRoot, theme)

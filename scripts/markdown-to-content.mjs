@@ -93,6 +93,16 @@ function parseSlide(lines, type, id, index) {
   if (Array.isArray(slide.loop)) slide.loop = slide.loop.map((item) => item.trim())
   if (Array.isArray(slide.statements)) slide.statements = slide.statements.map((item, n) => { const [title, body] = item.split('|').map((part) => part.trim()); return { number: String(n + 1).padStart(2, '0'), title, body: body || '' } })
   if (Array.isArray(slide.reviews)) slide.reviews = slide.reviews.map((item) => { const [name, text, avatar] = item.split('|').map((part) => part.trim()); return { name, text, avatar: avatar || '/placeholder-avatar.svg' } })
+  if (Array.isArray(slide.marqueeImages)) slide.marqueeImages = slide.marqueeImages.map((item, itemIndex) => {
+    const [src, alt] = item.split('|').map((part) => part.trim())
+    assertImagePath(src, `${id}.marqueeImages[${itemIndex}].src`)
+    return { src, alt: alt || `滚动图片 ${itemIndex + 1}` }
+  })
+  if (Array.isArray(slide.images)) slide.images = slide.images.map((item, itemIndex) => {
+    const [src, alt, label] = item.split('|').map((part) => part.trim())
+    assertImagePath(src, `${id}.images[${itemIndex}].src`)
+    return { src, alt: alt || `结束页图片 ${itemIndex + 1}`, label: label || '' }
+  })
   return { slide, nextIndex: i }
 }
 

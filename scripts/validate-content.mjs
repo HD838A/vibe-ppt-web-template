@@ -8,6 +8,8 @@ if (!Array.isArray(deck.slides) || deck.slides.length < 3) throw new Error('deck
 for (const slide of deck.slides) {
   if (!slide.id || !slide.type) throw new Error('每一页都必须有 id 和 type。')
   if (!supportedTypes.has(slide.type)) throw new Error(`不支持的版式：${slide.type}`)
+  if (slide.marqueeImages && (!Array.isArray(slide.marqueeImages) || slide.marqueeImages.length < 2)) throw new Error(`${slide.id}.marqueeImages 至少需要 2 张图片。`)
+  if (slide.images && (!Array.isArray(slide.images) || slide.images.length < 1 || slide.images.length > 2)) throw new Error(`${slide.id}.images 需要 1–2 张图片。`)
 }
 
 if (/data:image\//i.test(contentSource)) throw new Error('请不要把图片以内嵌 Base64 放进内容文件。')

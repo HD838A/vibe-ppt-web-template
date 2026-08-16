@@ -165,6 +165,16 @@ export const deck = {
       body: '把这里替换成你的关注方式、联系方式或下一步邀请。',
       account: '@your-account',
       image: placeholder,
+      images: [
+        { src: '/placeholder-qr.svg', alt: '二维码占位图 1', label: '入口一' },
+        { src: '/placeholder-qr.svg', alt: '二维码占位图 2', label: '入口二' },
+      ],
+      marqueeImages: [
+        { src: placeholder, alt: '作品占位图 1' },
+        { src: '/placeholder-background.svg', alt: '作品占位图 2' },
+        { src: '/placeholder-avatar.svg', alt: '作品占位图 3' },
+        { src: '/placeholder-qr.svg', alt: '作品占位图 4' },
+      ],
     },
   ],
 }
