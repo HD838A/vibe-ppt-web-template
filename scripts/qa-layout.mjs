@@ -29,6 +29,13 @@ const waitForServer = async (url, processHandle) => {
   throw new Error(`等待本地预览超时：${url}`)
 }
 
+const settleMotion = async (page) => page.evaluate(() => {
+  for (const animation of document.getAnimations()) {
+    const timing = animation.effect?.getComputedTiming()
+    if (Number.isFinite(timing?.endTime)) animation.finish()
+  }
+})
+
 const auditVisibleSlide = async (page) => page.evaluate(() => {
   const frame = document.querySelector('.slide-frame:not(.slide-frame--hidden)')
   const slide = frame?.querySelector('.slide')
@@ -172,6 +179,21 @@ const auditProfileSurfaceContract = async (page) => page.evaluate(() => {
   return failures
 })
 
+const auditMotionContract = async (page) => page.evaluate(() => {
+  const activeFrames = [...document.querySelectorAll('.slide-frame--active')]
+  const active = activeFrames[0]
+  if (!active) return ['没有活动页动画状态']
+  const failures = []
+  if (activeFrames.length !== 1) failures.push(`活动页数量应为 1，实际为 ${activeFrames.length}`)
+  const transition = getComputedStyle(active)
+  if (!transition.transitionProperty.split(',').map((value) => value.trim()).includes('opacity')) failures.push('活动页缺少 opacity 切换过渡')
+  const hiddenDisplay = [...document.querySelectorAll('.slide-frame--hidden')].map((frame) => getComputedStyle(frame).display)
+  if (hiddenDisplay.some((display) => display === 'none')) failures.push('非活动页被 display:none 移除，无法交叉淡出')
+  const target = active.querySelector('.slide > :not(.slide-background):not(.cover-grid):not(.cover-orb):not(.chapter-glow)')
+  if (!target || getComputedStyle(target).animationName === 'none') failures.push('活动页内容缺少入场动画')
+  return failures
+})
+
 const port = await getFreePort()
 const baseUrl = `http://127.0.0.1:${port}`
 const viteBinary = path.resolve('node_modules', '.bin', process.platform === 'win32' ? 'vite.cmd' : 'vite')
@@ -192,10 +214,12 @@ try {
     await mkdir(themeOutput, { recursive: true })
     await page.goto(`${baseUrl}/?theme=${theme}`, { waitUntil: 'networkidle' })
     await page.getByRole('button', { name: '⛶ 演讲模式' }).click()
+    await settleMotion(page)
     const total = await page.locator('.slide-frame').count()
     for (let pageIndex = 0; pageIndex < total; pageIndex += 1) {
       const audit = await auditVisibleSlide(page)
       const profileSurface = await auditProfileSurfaceContract(page)
+      const motion = await auditMotionContract(page)
       const pageFailures = {
         fatal: audit.fatal ? [audit.fatal] : [],
         ratio: audit.ratio && Math.abs(audit.ratio - 16 / 9) > 0.01 ? [`${audit.ratio}`] : [],
@@ -206,13 +230,30 @@ try {
         contentOverlap: audit.contentOverlap || [],
         lowContrast: audit.lowContrast || [],
         profileSurface,
+        motion,
       }
       if (Object.values(pageFailures).some((items) => items.length)) failures.push({ theme, page: pageIndex + 1, ...pageFailures })
       await page.screenshot({ path: path.join(themeOutput, `${String(pageIndex + 1).padStart(2, '0')}.png`) })
-      if (pageIndex < total - 1) await page.keyboard.press('ArrowRight')
+      if (pageIndex < total - 1) {
+        await page.keyboard.press('ArrowRight')
+        await settleMotion(page)
+      }
     }
     await page.keyboard.press('Escape')
   }
+
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto(`${baseUrl}/?theme=default`, { waitUntil: 'networkidle' })
+  await page.getByRole('button', { name: '⛶ 演讲模式' }).click()
+  const reducedMotionFailures = await page.evaluate(() => {
+    const content = document.querySelector('.slide-frame--active .cover-inner')
+    const scan = document.querySelector('.qr-scan')
+    const failures = []
+    if (!content || Number.parseFloat(getComputedStyle(content).animationDuration) > 0.01) failures.push('内容动画未按系统设置降级')
+    if (scan && getComputedStyle(scan).display !== 'none') failures.push('连续扫描动画未按系统设置关闭')
+    return failures
+  })
+  if (reducedMotionFailures.length) failures.push({ theme: 'default', page: 'reduced-motion', motion: reducedMotionFailures })
 } finally {
   await browser?.close()
   vite.kill('SIGTERM')

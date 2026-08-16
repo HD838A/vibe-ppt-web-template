@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { deck } from './content.js'
 import { resolveThemeId, themes } from './themes.js'
 import './deck.css'
@@ -109,7 +109,7 @@ function GallerySlide({ slide, selected, onSelect }) {
         </div>
       </div>
       <div className="gallery-visual">
-        <img src={selectedItem.image} alt="项目占位图片" style={getMediaStyle(slide, selectedItem, 'contain')} />
+        <img key={selectedItem.image} src={selectedItem.image} alt="项目占位图片" style={getMediaStyle(slide, selectedItem, 'contain')} />
       </div>
     </SlideSurface>
   )
@@ -210,7 +210,10 @@ function ReviewsSlide({ slide }) {
         <div className="reviews-stats">
           {slide.stats.map((stat) => <div key={stat.label}><span>{stat.label}</span><strong>{stat.value}</strong></div>)}
         </div>
-        <img className="qr" src={slide.qr} alt="二维码占位" />
+        <div className="qr-wrap">
+          <img className="qr" src={slide.qr} alt="二维码占位" />
+          <span className="qr-scan" aria-hidden="true" />
+        </div>
       </div>
       <div className="review-wall">
         {slide.reviews.map((review) => (
@@ -295,6 +298,8 @@ export default function App() {
   const [presentation, setPresentation] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
   const [selectedProject, setSelectedProject] = useState(0)
+  const [visibleSlides, setVisibleSlides] = useState(() => new Set([0]))
+  const deckRef = useRef(null)
   const requestedTheme = new URLSearchParams(window.location.search).get('theme')
   const themeId = resolveThemeId(requestedTheme || deck.theme)
   const theme = themes[themeId]
@@ -315,6 +320,27 @@ export default function App() {
   }, [presentation])
 
   useEffect(() => {
+    const frames = [...(deckRef.current?.querySelectorAll('.slide-frame') || [])]
+    if (!frames.length || !('IntersectionObserver' in window)) {
+      setVisibleSlides(new Set(frames.map((_, index) => index)))
+      return undefined
+    }
+    const observer = new IntersectionObserver((entries) => {
+      setVisibleSlides((current) => {
+        const next = new Set(current)
+        entries.forEach((entry) => {
+          const index = Number(entry.target.dataset.slideIndex)
+          if (entry.isIntersecting) next.add(index)
+          else next.delete(index)
+        })
+        return next
+      })
+    }, { threshold: 0.18 })
+    frames.forEach((frame) => observer.observe(frame))
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
     const onKeyDown = (event) => {
       if (!presentation) return
       if (['ArrowRight', 'PageDown', ' '].includes(event.key)) { event.preventDefault(); goTo(activeIndex + 1) }
@@ -328,14 +354,18 @@ export default function App() {
   }, [activeIndex, presentation])
 
   return (
-    <main className={`app-shell ${presentation ? 'app-shell--present' : ''}`} data-theme={themeId} style={theme.vars}>
+    <main className={`app-shell motion-ready ${presentation ? 'app-shell--present' : ''}`} data-theme={themeId} style={theme.vars}>
       <div className="toolbar">
         {presentation && <span className="toolbar-count">{activeIndex + 1} / {deck.slides.length}</span>}
         <button onClick={presentation ? exitPresentation : enterPresentation}>{presentation ? '退出演讲模式' : '⛶ 演讲模式'}</button>
       </div>
-      <div className="deck">
+      <div className="deck" ref={deckRef}>
         {deck.slides.map((slide, index) => (
-          <div className={`slide-frame slide-frame--${slide.theme} ${presentation && index !== activeIndex ? 'slide-frame--hidden' : ''}`} key={slide.id}>
+          <div
+            className={`slide-frame slide-frame--${slide.theme} ${presentation && index !== activeIndex ? 'slide-frame--hidden' : ''} ${presentation && index === activeIndex ? 'slide-frame--active' : ''} ${(presentation ? index === activeIndex : visibleSlides.has(index)) ? 'slide-frame--motion-active' : ''}`}
+            data-slide-index={index}
+            key={slide.id}
+          >
             {renderSlide(slide, { selected: selectedProject, onSelect: setSelectedProject })}
             <Footer index={index} total={deck.slides.length} theme={slide.theme} />
           </div>
