@@ -72,6 +72,7 @@ function parseSlide(lines, type, id, index) {
   if (slide.layout && !LAYOUTS.has(slide.layout)) throw new Error(`${id}.layout 必须是 ${[...LAYOUTS].join(' / ')}`)
   if (slide.imageRatio && !IMAGE_RATIOS.has(slide.imageRatio)) throw new Error(`${id}.imageRatio 必须是 ${[...IMAGE_RATIOS].join(' / ')}`)
   if (slide.imageFit && !IMAGE_FITS.has(slide.imageFit)) throw new Error(`${id}.imageFit 必须是 cover / contain`)
+  if (slide.backgroundFit && !IMAGE_FITS.has(slide.backgroundFit)) throw new Error(`${id}.backgroundFit 必须是 cover / contain`)
   for (const key of ['imagePosition', 'backgroundPosition']) if (slide[key] && !IMAGE_POSITIONS.has(slide[key])) throw new Error(`${id}.${key} 使用了不支持的位置`)
   if (Array.isArray(slide.items)) {
     slide.items = type === 'skills'

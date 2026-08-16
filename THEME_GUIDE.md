@@ -8,6 +8,7 @@
 - 一页只保留一个主结论和一个主视觉焦点。
 - 图片必须声明用途明确的比例、裁切和焦点；不能用随机尺寸填满剩余空间。
 - 背景图上的文字必须保持可读，禁止把文字直接压在高噪声区域。
+- 任何版式只要自己设置了深色背景，就必须同时显式设置浅色前景；不能依赖外层 `slide.theme` 恰好提供正确文字色。
 - 移动端优先保留标题与结论；装饰图可隐藏，但关键信息不能依赖图片。
 
 ## `default`：编辑纸张
@@ -60,6 +61,7 @@
 | `imageFit` | `cover`、`contain` | 裁切或完整展示 |
 | `imagePosition` | `center`、`top`、`bottom`、`left`、`right` 及四个角 | 图片焦点位置 |
 | `backgroundImage` | `/placeholder-background.svg` 或 `/assets/...` | 全页背景图 |
+| `backgroundFit` | `cover`、`contain` | 独立控制背景图裁切，不继承普通图片的 `imageFit` |
 | `backgroundPosition` | 与 `imagePosition` 相同 | 背景图焦点位置 |
 
 画廊条目格式：
@@ -75,4 +77,4 @@
 2. 在 `src/themes.js` 补齐颜色 token 与布局 token。
 3. 在 `src/deck.css` 添加 `[data-theme="主题 ID"]` 下的结构规则，不能只覆盖颜色。
 4. 添加包含图片字段的 Markdown 示例。
-5. 分别检查封面、图文页、卡片页、章节页和移动端，再运行 `npm run validate` 与 `npm run build`。
+5. 分别检查封面、图文页、卡片页、章节页和移动端，再运行 `npm run validate`、`npm run build` 与 `npm run qa:layout`。

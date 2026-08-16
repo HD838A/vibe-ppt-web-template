@@ -6,6 +6,7 @@ title: 赛博朋克主题示例
 # cover
 layout: full-bleed
 backgroundImage: /placeholder-background.svg
+backgroundFit: cover
 backgroundPosition: center
 eyebrow: SYSTEM ONLINE
 title: 数据正在说话

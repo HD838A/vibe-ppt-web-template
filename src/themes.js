@@ -5,8 +5,8 @@ const shared = {
   '--theme-bg': '#f3f1eb',
   '--theme-surface': '#ffffff',
   '--theme-ink': '#111111',
-  '--theme-muted': '#1111118f',
-  '--theme-faint': '#11111157',
+  '--theme-muted': '#555555',
+  '--theme-faint': '#666666',
   '--theme-border': '#11111124',
   '--theme-border-strong': '#11111147',
   '--theme-title': '#111111',
@@ -37,7 +37,7 @@ export const themes = {
   apple: {
     id: 'apple', name: '苹果风', vars: { ...shared,
       '--theme-page-bg': '#f5f5f7', '--theme-bg': '#ffffff', '--theme-surface': '#fbfbfd',
-      '--theme-ink': '#1d1d1f', '--theme-muted': '#6e6e73', '--theme-faint': '#86868b',
+      '--theme-ink': '#1d1d1f', '--theme-muted': '#5f5f63', '--theme-faint': '#6e6e73',
       '--theme-border': '#1d1d1f18', '--theme-border-strong': '#1d1d1f32', '--theme-title': '#1d1d1f',
       '--theme-link': '#06c', '--theme-accent': '#0071e3', '--theme-accent-2': '#34c759',
       '--theme-dark': '#1d1d1f', '--theme-display-font': '"SF Pro Display", "Helvetica Neue", "PingFang SC", sans-serif',
@@ -50,7 +50,7 @@ export const themes = {
   dopamine: {
     id: 'dopamine', name: '多巴胺', vars: { ...shared,
       '--theme-page-bg': '#fff4e8', '--theme-bg': '#fff9f2', '--theme-surface': '#ffffff',
-      '--theme-ink': '#24113f', '--theme-muted': '#5f4b73', '--theme-faint': '#8a7698',
+      '--theme-ink': '#24113f', '--theme-muted': '#4b365c', '--theme-faint': '#5f4b73',
       '--theme-border': '#24113f2b', '--theme-border-strong': '#24113f52', '--theme-title': '#24113f',
       '--theme-link': '#e83e8c', '--theme-accent': '#ff4d8d', '--theme-accent-2': '#ffd43b',
       '--theme-dark': '#24113f', '--theme-dark-muted': '#fff1f7b8', '--theme-dark-border': '#ffffff32',

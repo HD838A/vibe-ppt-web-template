@@ -37,7 +37,10 @@ function SlideSurface({ slide, className, children }) {
           src={slide.backgroundImage}
           alt=""
           aria-hidden="true"
-          style={{ objectPosition: slide.backgroundPosition || slide.imagePosition || 'center' }}
+          style={{
+            objectFit: slide.backgroundFit || 'cover',
+            objectPosition: slide.backgroundPosition || slide.imagePosition || 'center',
+          }}
         />
       ) : null}
       {children}
@@ -292,7 +295,8 @@ export default function App() {
   const [presentation, setPresentation] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
   const [selectedProject, setSelectedProject] = useState(0)
-  const themeId = resolveThemeId(deck.theme)
+  const requestedTheme = new URLSearchParams(window.location.search).get('theme')
+  const themeId = resolveThemeId(requestedTheme || deck.theme)
   const theme = themes[themeId]
 
   const goTo = (index) => setActiveIndex(Math.max(0, Math.min(deck.slides.length - 1, index)))

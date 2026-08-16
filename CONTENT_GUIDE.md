@@ -47,16 +47,25 @@ imageRatio: 4:3
 imageFit: cover
 imagePosition: top
 backgroundImage: /assets/background.jpg
+backgroundFit: cover
 backgroundPosition: center
 ```
 
 - `layout`：`auto`、`media-left`、`media-right`、`media-top`、`media-bottom`、`full-bleed`、`center`。
 - `imageRatio`：`auto`、`1:1`、`4:3`、`3:4`、`16:9`、`9:16`。
 - `imageFit`：摄影图通常使用 `cover`，产品图、界面截图和流程图通常使用 `contain`。
+- `backgroundFit`：背景摄影图通常使用 `cover`；需要完整展示的产品图或设备图使用 `contain`。它与 `imageFit` 独立，避免普通图片设置意外改变背景裁切。
 - `imagePosition` / `backgroundPosition`：`center`、`top`、`bottom`、`left`、`right`、`top left`、`top right`、`bottom left`、`bottom right`。
 - 画廊项目支持 `标题 | 描述 | 图片 | 比例 | 焦点 | fit`。
 
 主题会决定默认边距、图文比例、图片框、卡片和标题节奏；Markdown 的 `layout` 用来表达这一页的内容意图，不应为每套主题手写不同内容。
+
+### 图片白底与裁切排查
+
+- `contain` 只能保证图片内容完整，不会移除图片文件自身已经存在的白色像素。
+- PNG/WebP 透明素材若出现矩形白底，先检查原文件是否真的带透明通道，再检查主题图片框是否设置了背景、边框或阴影。
+- 设备图、界面截图和二维码默认优先 `contain`；只有允许裁掉边缘的摄影图才使用 `cover`。
+- 关键按钮或顶部状态栏必须进入逐页截图验收，不能只依赖图片加载成功。
 
 ## 给 AI 的约束
 
