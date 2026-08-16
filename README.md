@@ -50,6 +50,7 @@ npm run build
 
 - 内容入口：[`src/content.js`](src/content.js)
 - 人类与 AI 的填充规则：[`CONTENT_GUIDE.md`](CONTENT_GUIDE.md)
+- 常见问题与发布前排查：[`TROUBLESHOOTING.md`](TROUBLESHOOTING.md)
 - 可直接复制的 AI 提示词：[`AI_PROMPT_TEMPLATE.md`](AI_PROMPT_TEMPLATE.md)
 - 本地素材说明：[`public/assets/README.md`](public/assets/README.md)
 - 结构校验：[`scripts/validate-content.mjs`](scripts/validate-content.mjs)
@@ -90,6 +91,7 @@ npm run build
 - 深色 Profile 版式在 `dark`、`paper`、`split` 外层表面下是否仍保持可读。
 - 演讲模式是否只有一个活动页、是否保留交叉淡出，以及页内元素是否应用入场动画。
 - `prefers-reduced-motion` 是否关闭连续动画并正确降级。
+- 在 16:10 视口中，演讲模式是否真正贴合视口四边，避免固定 16:9 造成顶部或底部留白。
 
 字体的字形行盒可能让 `scrollHeight` 略大于 `clientHeight`。只有元素自身会裁切溢出内容时才算失败，不能仅凭两者差值判断文字被截断。自动布局验收截图保存在系统临时目录，不进入仓库。
 

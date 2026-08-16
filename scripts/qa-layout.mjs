@@ -194,6 +194,27 @@ const auditMotionContract = async (page) => page.evaluate(() => {
   return failures
 })
 
+const auditPresentationViewport = async (page) => page.evaluate(() => {
+  const frame = document.querySelector('.slide-frame--active')
+  const slide = frame?.querySelector('.slide')
+  if (!frame || !slide) return ['没有找到演讲模式活动页']
+  const failures = []
+  const tolerance = 1
+  for (const [name, element] of [['frame', frame], ['slide', slide]]) {
+    const rect = element.getBoundingClientRect()
+    const gaps = {
+      top: rect.top,
+      right: innerWidth - rect.right,
+      bottom: innerHeight - rect.bottom,
+      left: rect.left,
+    }
+    for (const [edge, gap] of Object.entries(gaps)) {
+      if (Math.abs(gap) > tolerance) failures.push(`${name}.${edge} 与视口相差 ${gap.toFixed(2)}px`)
+    }
+  }
+  return failures
+})
+
 const port = await getFreePort()
 const baseUrl = `http://127.0.0.1:${port}`
 const viteBinary = path.resolve('node_modules', '.bin', process.platform === 'win32' ? 'vite.cmd' : 'vite')
@@ -242,6 +263,21 @@ try {
     await page.keyboard.press('Escape')
   }
 
+  await page.setViewportSize({ width: 1440, height: 900 })
+  for (const theme of themes) {
+    await page.goto(`${baseUrl}/?theme=${theme}`, { waitUntil: 'networkidle' })
+    await page.getByRole('button', { name: '⛶ 演讲模式' }).click()
+    await settleMotion(page)
+    const startViewport = await auditPresentationViewport(page)
+    await page.keyboard.press('End')
+    await settleMotion(page)
+    const endViewport = await auditPresentationViewport(page)
+    const viewport = [...startViewport, ...endViewport]
+    if (viewport.length) failures.push({ theme, page: '16:10-viewport', viewport })
+    await page.keyboard.press('Escape')
+  }
+
+  await page.setViewportSize({ width: 1280, height: 720 })
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto(`${baseUrl}/?theme=default`, { waitUntil: 'networkidle' })
   await page.getByRole('button', { name: '⛶ 演讲模式' }).click()
